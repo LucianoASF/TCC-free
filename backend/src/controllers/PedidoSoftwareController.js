@@ -1,7 +1,7 @@
 const Controller = require('./Controller.js');
 
 class PedidoSoftwareController extends Controller {
-  constructor(pedidoSoftwareService) {
+  constructor({ pedidoSoftwareService }) {
     super(pedidoSoftwareService);
   }
   async pegaTodosOsRegistrosPorCliente(req, res) {

@@ -1,51 +1,57 @@
+// usuariosRoute.js
 const { Router } = require('express');
+const { makeInvoker } = require('awilix-express');
 const { autentica, autoriza } = require('../middlewares/auth');
 
-function criarUsuariosRoutes(usuarioController, pedidoSoftwareController) {
+module.exports = () => {
   const router = Router();
-  router.get('/usuarios', (req, res) => usuarioController.pegaTodos(req, res));
-  router.get('/usuarios/:id', (req, res) =>
-    usuarioController.pegaUmPorId(req, res),
+
+  // Configuração para `usuarioController` e `pedidoSoftwareController`
+  const invokeUsuarioController = makeInvoker(
+    (container) => container.usuarioController,
   );
-  router.post('/usuarios', (req, res) =>
-    usuarioController.criaRegistro(req, res),
+  const invokePedidoSoftwareController = makeInvoker(
+    (container) => container.pedidoSoftwareController,
   );
-  router.put('/usuarios/:id', (req, res) =>
-    usuarioController.atualizaRegistro(req, res),
-  );
-  router.delete('/usuarios/:id', (req, res) =>
-    usuarioController.excluiRegistro(req, res),
-  );
+
+  // Rotas de usuários
+  router.get('/usuarios', invokeUsuarioController('pegaTodos'));
+  router.get('/usuarios/:id', invokeUsuarioController('pegaUmPorId'));
+  router.post('/usuarios', invokeUsuarioController('criaRegistro'));
+  router.put('/usuarios/:id', invokeUsuarioController('atualizaRegistro'));
+  router.delete('/usuarios/:id', invokeUsuarioController('excluiRegistro'));
+
+  // Rotas de pedidos de software dos clientes
   router.get(
     '/usuarios/clientes/:cliente_id/pedidos-softwares',
     autentica,
     autoriza('cliente'),
-    (req, res) =>
-      pedidoSoftwareController.pegaTodosOsRegistrosPorCliente(req, res),
+    invokePedidoSoftwareController('pegaTodosOsRegistrosPorCliente'),
   );
   router.get(
     '/usuarios/clientes/:cliente_id/pedidos-softwares/:id',
-    (req, res) => pedidoSoftwareController.pegaUmPorId(req, res),
+    invokePedidoSoftwareController('pegaUmPorId'),
   );
-  router.post('/usuarios/clientes/:cliente_id/pedidos-softwares', (req, res) =>
-    pedidoSoftwareController.criaRegistro(req, res),
+  router.post(
+    '/usuarios/clientes/:cliente_id/pedidos-softwares',
+    invokePedidoSoftwareController('criaRegistro'),
   );
   router.put(
     '/usuarios/clientes/:cliente_id/pedidos-softwares/:id',
     autentica,
     autoriza('cliente'),
-    (req, res) => pedidoSoftwareController.atualizaRegistro(req, res),
+    invokePedidoSoftwareController('atualizaRegistro'),
   );
   router.delete(
     '/usuarios/clientes/:cliente_id/pedidos-softwares/:id',
     autentica,
     autoriza('cliente'),
-    (req, res) => pedidoSoftwareController.excluiRegistro(req, res),
+    invokePedidoSoftwareController('excluiRegistro'),
   );
-  router.get('/usuarios/pedidos-softwares/disponiveis', (req, res) =>
-    pedidoSoftwareController.pegaTodosOsRegistrosSemDev(req, res),
+  router.get(
+    '/usuarios/pedidos-softwares/disponiveis',
+    invokePedidoSoftwareController('pegaTodosOsRegistrosSemDev'),
   );
-  return router;
-}
 
-module.exports = criarUsuariosRoutes;
+  return router;
+};

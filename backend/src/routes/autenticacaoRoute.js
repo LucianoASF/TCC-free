@@ -1,10 +1,11 @@
 const { Router } = require('express');
+const { makeInvoker } = require('awilix-express');
 
-function criarAutenticacaoRoute(autenticacaoController) {
+module.exports = () => {
   const router = Router();
-  router.post('/login', (req, res) => autenticacaoController.login(req, res));
-
+  const invokeAutenticacaoController = makeInvoker(
+    (container) => container.autenticacaoController,
+  );
+  router.post('/login', invokeAutenticacaoController('login'));
   return router;
-}
-
-module.exports = criarAutenticacaoRoute;
+};

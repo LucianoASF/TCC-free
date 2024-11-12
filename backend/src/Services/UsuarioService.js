@@ -2,7 +2,7 @@ const Service = require('./Service.js');
 const bcrypt = require('bcrypt');
 
 class UsuarioService extends Service {
-  constructor(usuarioRepository) {
+  constructor({ usuarioRepository }) {
     super(usuarioRepository);
     this.repository = usuarioRepository;
   }

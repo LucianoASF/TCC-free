@@ -1,7 +1,7 @@
 const Service = require('./Service.js');
 
 class UsuarioPedidoSoftwareService extends Service {
-  constructor(usuarioPedidoSoftwareRepository) {
+  constructor({ usuarioPedidoSoftwareRepository }) {
     super(usuarioPedidoSoftwareRepository);
   }
 }

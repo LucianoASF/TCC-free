@@ -1,7 +1,7 @@
 const Controller = require('./Controller.js');
 
 class UsuarioPedidoSoftwareController extends Controller {
-  constructor(usuarioPedidoSoftwareService) {
+  constructor({ usuarioPedidoSoftwareService }) {
     super(usuarioPedidoSoftwareService);
   }
 }

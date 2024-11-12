@@ -1,7 +1,7 @@
 const Service = require('./Service.js');
 
 class TimeService extends Service {
-  constructor(timeRepository) {
+  constructor({ timeRepository }) {
     super(timeRepository);
   }
 }

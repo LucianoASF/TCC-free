@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const authConfig = require('../config/auth.json');
 
 class autenticacaoService {
-  constructor(usuarioRepository) {
+  constructor({ usuarioRepository }) {
     this.usuarioRepository = usuarioRepository;
   }
   async login(dados) {

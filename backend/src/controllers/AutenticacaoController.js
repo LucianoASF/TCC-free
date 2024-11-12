@@ -1,5 +1,5 @@
 class AutenticacaoController {
-  constructor(autenticacaoService) {
+  constructor({ autenticacaoService }) {
     this.autenticacaoService = autenticacaoService;
   }
   async login(req, res) {

@@ -1,17 +1,21 @@
+// timesRoute.js
 const { Router } = require('express');
+const { makeInvoker } = require('awilix-express');
 
-function criarTimesRoutes(timeController) {
+module.exports = () => {
   const router = Router();
-  router.get('/times', (req, res) => timeController.pegaTodos(req, res));
-  router.get('/times/:id', (req, res) => timeController.pegaUmPorId(req, res));
-  router.post('/times', (req, res) => timeController.criaRegistro(req, res));
-  router.put('/times/:id', (req, res) =>
-    timeController.atualizaRegistro(req, res),
-  );
-  router.delete('/times/:id', (req, res) =>
-    timeController.excluiRegistro(req, res),
-  );
-  return router;
-}
 
-module.exports = criarTimesRoutes;
+  // Criamos uma função que invoca o `timeController` do container
+  const invokeTimeController = makeInvoker(
+    (container) => container.timeController,
+  );
+
+  // Definindo as rotas para `timeController`
+  router.get('/times', invokeTimeController('pegaTodos'));
+  router.get('/times/:id', invokeTimeController('pegaUmPorId'));
+  router.post('/times', invokeTimeController('criaRegistro'));
+  router.put('/times/:id', invokeTimeController('atualizaRegistro'));
+  router.delete('/times/:id', invokeTimeController('excluiRegistro'));
+
+  return router;
+};

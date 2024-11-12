@@ -1,7 +1,7 @@
 const Controller = require('./Controller.js');
 
 class TimeController extends Controller {
-  constructor(timeService) {
+  constructor({ timeService }) {
     super(timeService);
   }
 }

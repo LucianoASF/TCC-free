@@ -1,7 +1,7 @@
 const Service = require('./Service.js');
 
 class PedidosSoftwareService extends Service {
-  constructor(pedidoSoftwareRepository) {
+  constructor({ pedidoSoftwareRepository }) {
     super(pedidoSoftwareRepository);
   }
   async pegaTodosOsRegistrosPorCliente(clienteId) {
