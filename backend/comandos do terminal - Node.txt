@@ -1,0 +1,18 @@
+criar a pasta model, migrations, config e seeders:
+npx sequelize-cli init
+
+
+Criar model:
+npx sequelize-cli model:generate --name Pessoa --attributes nome:string,email:string,cpf:string,ativo:boolean,role:string
+
+rodar migração:
+npx sequelize-cli db:migrate
+
+gerar seed:
+npx sequelize-cli seed:generate --name demo-pessoa
+
+rodar todas as seeds:
+npx sequelize-cli db:seed:all
+
+rodar seeds expecificas:
+npx sequelize-cli db:seed --seed 20240927214716-demo-Categorias.js
