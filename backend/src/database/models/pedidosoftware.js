@@ -6,13 +6,15 @@ module.exports = (sequelize, DataTypes) => {
       PedidoSoftware.belongsTo(models.Usuario, {
         foreignKey: 'cliente_id',
       });
-      PedidoSoftware.hasMany(models.UsuarioPedidoSoftware, {
+      PedidoSoftware.belongsToMany(models.Usuario, {
+        through: models.UsuarioPedidoSoftware,
         foreignKey: 'pedido_software_id',
         as: 'candidatos',
       });
       PedidoSoftware.belongsToMany(models.Time, {
         through: models.TimePedidoSoftware,
         foreignKey: 'pedido_software_id',
+        as: 'times',
       });
     }
   }

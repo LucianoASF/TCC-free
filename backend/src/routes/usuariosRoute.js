@@ -30,7 +30,7 @@ module.exports = () => {
   );
   router.get(
     '/usuarios/clientes/:cliente_id/pedidos-softwares/:id',
-    invokePedidoSoftwareController('pegaUmPorId'),
+    invokePedidoSoftwareController('pegaUmPorIdCliente'),
   );
   router.post(
     '/usuarios/clientes/:cliente_id/pedidos-softwares',
@@ -50,6 +50,8 @@ module.exports = () => {
   );
   router.get(
     '/usuarios/pedidos-softwares/disponiveis',
+    autentica,
+    autoriza('desenvolvedor'),
     invokePedidoSoftwareController('pegaTodosOsRegistrosSemDev'),
   );
 

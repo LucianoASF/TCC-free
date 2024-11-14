@@ -12,7 +12,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   TimePedidoSoftware.init(
-    {},
+    {
+      aceito: DataTypes.BOOLEAN,
+    },
     {
       sequelize,
       modelName: 'TimePedidoSoftware',

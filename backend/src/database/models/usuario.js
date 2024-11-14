@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
       Usuario.hasMany(models.PedidoSoftware, {
         foreignKey: 'cliente_id',
       });
-      Usuario.hasMany(models.UsuarioPedidoSoftware, {
+      Usuario.belongsToMany(models.PedidoSoftware, {
+        through: models.UsuarioPedidoSoftware,
         foreignKey: 'desenvolvedor_id',
       });
       Usuario.belongsToMany(models.Time, {

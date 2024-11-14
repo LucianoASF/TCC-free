@@ -12,7 +12,7 @@ class PedidoSoftwareRepository extends Repository {
       },
     });
   }
-  async pegaUmPorId(id, clienteId) {
+  async pegaUmPorIdCliente(id, clienteId) {
     return dataSource.PedidoSoftware.findOne({
       where: { id, cliente_id: clienteId },
     });
@@ -24,15 +24,6 @@ class PedidoSoftwareRepository extends Repository {
     return dataSource.PedidoSoftware.update(registroAtualizado, {
       where: { id, cliente_id: clienteId },
     });
-  }
-  async pegaTodosOsRegistrosSemDev() {
-    const todosPedidos = await this.pegaTodosOsRegistros();
-    let pedidosSemDev = [];
-    todosPedidos.forEach(async (pedido) => {
-      const item = await pedido.getCandidatos({ where: { aceito: 0 } });
-      pedidosSemDev.push(item);
-    });
-    return pedidosSemDev;
   }
 }
 

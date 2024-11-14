@@ -19,10 +19,13 @@ class PedidoSoftwareController extends Controller {
       return res.status(500).json({ error: error.message });
     }
   }
-  async pegaUmPorId(req, res) {
+  async pegaUmPorIdCliente(req, res) {
     const { cliente_id, id } = req.params;
     try {
-      const registro = await this.entidadeService.pegaUmPorId(id, cliente_id);
+      const registro = await this.entidadeService.pegaUmPorIdCliente(
+        id,
+        cliente_id,
+      );
       return res.status(200).json(registro);
     } catch (error) {
       if (error.status === 404) {
