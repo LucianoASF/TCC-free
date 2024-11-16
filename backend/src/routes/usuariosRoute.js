@@ -54,6 +54,12 @@ module.exports = () => {
     autoriza('desenvolvedor'),
     invokePedidoSoftwareController('pegaTodosOsRegistrosSemDev'),
   );
+  router.get(
+    '/usuarios/desenvolvedor/:desenvolvedor_id/pedidos-softwares',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokePedidoSoftwareController('pegaTodosOsPedidosDesenvolvedor'),
+  );
 
   return router;
 };

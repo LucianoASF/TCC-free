@@ -100,6 +100,25 @@ class PedidoSoftwareController extends Controller {
       return res.status(500).json({ error: error.message });
     }
   }
+  async pegaTodosOsPedidosDesenvolvedor(req, res) {
+    if (Number(req.params.desenvolvedor_id) !== req.usuario.id) {
+      return res.status(403).json({
+        error: 'Não autorizado',
+      });
+    }
+    try {
+      const registros =
+        await this.entidadeService.pegaTodosOsPedidosDesenvolvedor(
+          req.params.desenvolvedor_id,
+        );
+      return res.status(200).json(registros);
+    } catch (error) {
+      if (error.status === 404) {
+        return res.status(404).json({ error: error.message });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = PedidoSoftwareController;

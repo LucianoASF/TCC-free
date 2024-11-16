@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       Usuario.belongsToMany(models.PedidoSoftware, {
         through: models.UsuarioPedidoSoftware,
         foreignKey: 'desenvolvedor_id',
+        as: 'PedidoSoftware',
       });
       Usuario.belongsToMany(models.Time, {
         through: models.UsuarioTime,

@@ -1,8 +1,9 @@
 const Service = require('./Service.js');
 
 class PedidosSoftwareService extends Service {
-  constructor({ pedidoSoftwareRepository }) {
+  constructor({ pedidoSoftwareRepository, usuarioService }) {
     super(pedidoSoftwareRepository);
+    this.usuarioService = usuarioService;
   }
   async pegaTodosOsRegistrosPorCliente(clienteId) {
     return this.repository.pegaTodosOsRegistrosPorCliente(Number(clienteId));
@@ -58,6 +59,16 @@ class PedidosSoftwareService extends Service {
         }
       }
     }
+    return pedidos;
+  }
+  async pegaTodosOsPedidosDesenvolvedor(idDesenvolvedor) {
+    idDesenvolvedor = Number(idDesenvolvedor);
+    const desenvolvedor = await this.usuarioService.pegaUmRegistroPorId(
+      idDesenvolvedor,
+    );
+    const pedidos = await desenvolvedor.getPedidoSoftware({
+      where: { '$UsuarioPedidoSoftware.aceito$': true },
+    });
     return pedidos;
   }
 }
