@@ -16,6 +16,10 @@ module.exports = () => {
   router.post('/times', invokeTimeController('criaRegistro'));
   router.put('/times/:id', invokeTimeController('atualizaRegistro'));
   router.delete('/times/:id', invokeTimeController('excluiRegistro'));
+  router.get(
+    '/times/desenvolvedor/:desenvolvedor_id',
+    invokeTimeController('pegaTodosOstimesDoDesenvolvedor'),
+  );
 
   return router;
 };

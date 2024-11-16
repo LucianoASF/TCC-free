@@ -6,7 +6,9 @@ class UsuarioRepository extends Repository {
     super('Usuario');
   }
   async pegaRegistroPorEmail(email) {
-    const registro = await dataSource.Usuario.findOne({ where: { email } });
+    const registro = await dataSource.Usuario.scope('withPassword').findOne({
+      where: { email },
+    });
     return registro;
   }
 }

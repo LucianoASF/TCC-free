@@ -14,7 +14,7 @@ const Navbar = ({ role = null }) => {
     <NavbarRB bg="primary" data-bs-theme="dark">
       <Container>
         <div className="d-flex justify-content-between">
-          <NavbarRB.Brand href="#home">Navbar</NavbarRB.Brand>
+          <NavbarRB.Brand href="#home">Free</NavbarRB.Brand>
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/">
               Home
@@ -23,9 +23,14 @@ const Navbar = ({ role = null }) => {
               Seus Pedidos de Softwares
             </Nav.Link>
             {role === 'desenvolvedor' && (
-              <Nav.Link as={Link} to="/pedidos-softwares">
-                Pedidos de Softwares
-              </Nav.Link>
+              <>
+                <Nav.Link as={Link} to="/pedidos-softwares">
+                  Pedidos de Softwares
+                </Nav.Link>
+                <Nav.Link as={Link} to="/times">
+                  Times
+                </Nav.Link>
+              </>
             )}
           </Nav>
         </div>

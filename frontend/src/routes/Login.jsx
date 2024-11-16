@@ -18,18 +18,21 @@ const Login = () => {
   function validaFormulario() {
     if (email.length < 3 || email.length > 80) {
       setErroEmail('O Email deve ter entre 3 e 80 caracteres');
+      return false;
     } else {
       setErroSenha('');
     }
     if (senha.length < 3 || senha.length > 60) {
       setErroSenha('A senha deve ter entre 3 e 60 caracteres');
+      return false;
     } else {
       setErroSenha('');
     }
+    return true;
   }
   async function aoSubmeter(e) {
     e.preventDefault();
-    validaFormulario();
+    if (!validaFormulario()) return;
     const dados = { email, senha };
     try {
       const res = await axios.post('/login', dados);

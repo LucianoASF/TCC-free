@@ -16,11 +16,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'desenvolvedor_id',
       });
     }
-    toJSON() {
-      const attributes = { ...this.get() };
-      delete attributes.senha; // Remove a senha
-      return attributes;
-    }
   }
   Usuario.init(
     {
@@ -58,6 +53,12 @@ module.exports = (sequelize, DataTypes) => {
       role: DataTypes.STRING(20),
     },
     {
+      defaultScope: {
+        attributes: { exclude: ['senha'] }, // Exclui senha do escopo padrão
+      },
+      scopes: {
+        withPassword: { attributes: {} }, // Escopo para incluir a senha, se necessário
+      },
       sequelize,
       modelName: 'Usuario',
       tableName: 'usuarios',

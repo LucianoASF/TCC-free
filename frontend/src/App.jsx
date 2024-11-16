@@ -8,6 +8,7 @@ import { AuthProvider } from './context/authContext';
 import PrivateRoute from './components/PrivateRoute';
 import SeusPedidosSoftwares from './routes/SeusPedidosSoftwares';
 import PedidosSoftware from './routes/PedidosSoftware';
+import Times from './routes/Times';
 
 const App = () => {
   return (
@@ -38,6 +39,14 @@ const App = () => {
             element={
               <PrivateRoute roles="desenvolvedor">
                 <PedidosSoftware />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="times"
+            element={
+              <PrivateRoute roles="desenvolvedor">
+                <Times />
               </PrivateRoute>
             }
           />
