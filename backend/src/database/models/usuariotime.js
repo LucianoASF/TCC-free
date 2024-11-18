@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class UsuarioTime extends Model {
     /**
@@ -13,11 +11,15 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  UsuarioTime.init({
-    admin: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'UsuarioTime',
-  });
+  UsuarioTime.init(
+    {
+      admin: DataTypes.BOOLEAN,
+    },
+    {
+      sequelize,
+      modelName: 'UsuarioTime',
+      tableName: 'UsuarioTimes',
+    },
+  );
   return UsuarioTime;
 };

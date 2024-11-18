@@ -3,6 +3,7 @@ const removeId = require('./src/middlewares/removeId.js');
 const cors = require('cors');
 const { scopePerRequest } = require('awilix-express');
 const container = require('./container');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());

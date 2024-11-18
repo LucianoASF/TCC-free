@@ -14,12 +14,14 @@ const TimeService = require('./src/Services/TimeService.js');
 const PedidoSoftwareService = require('./src/Services/PedidoSoftwareService.js');
 const AutenticacaoService = require('./src/Services/AutenticacaoService.js');
 const UsuarioPedidoSoftwareService = require('./src/Services/UsuarioPedidoSoftwareService.js');
+const UsuarioTimeService = require('./src/Services/UsuarioTimeService.js');
 
 // Repositories
 const UsuarioRepository = require('./src/repositories/UsuarioRepository.js');
 const TimeRepository = require('./src/repositories/TimeRepository.js');
 const PedidoSoftwareRepository = require('./src/repositories/PedidoSoftwareRepository.js');
 const UsuarioPedidoSoftwareRepository = require('./src/repositories/UsuarioPedidoSoftwareRepository.js');
+const UsuarioTimeRepository = require('./src/repositories/UsuarioTimeRepository.js');
 
 // Routes
 const usuariosRoute = require('./src/routes/usuariosRoute.js');
@@ -36,6 +38,7 @@ container.register({
   usuarioPedidoSoftwareRepository: asClass(
     UsuarioPedidoSoftwareRepository,
   ).singleton(),
+  usuarioTimeRepository: asClass(UsuarioTimeRepository).singleton(),
 });
 
 // Registrar Services
@@ -47,6 +50,7 @@ container.register({
   usuarioPedidoSoftwareService: asClass(
     UsuarioPedidoSoftwareService,
   ).singleton(),
+  usuarioTimeService: asClass(UsuarioTimeService).singleton(),
 });
 
 // Registrar Controllers

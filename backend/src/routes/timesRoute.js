@@ -1,6 +1,7 @@
 // timesRoute.js
 const { Router } = require('express');
 const { makeInvoker } = require('awilix-express');
+const { autentica, autoriza } = require('../middlewares/auth');
 
 module.exports = () => {
   const router = Router();
@@ -13,11 +14,23 @@ module.exports = () => {
   // Definindo as rotas para `timeController`
   router.get('/times', invokeTimeController('pegaTodos'));
   router.get('/times/:id', invokeTimeController('pegaUmPorId'));
-  router.post('/times', invokeTimeController('criaRegistro'));
+  router.post(
+    '/times',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokeTimeController('criaRegistro'),
+  );
   router.put('/times/:id', invokeTimeController('atualizaRegistro'));
-  router.delete('/times/:id', invokeTimeController('excluiRegistro'));
+  router.delete(
+    '/times/:id/desenvolvedor/:desenvolvedor_id',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokeTimeController('excluiRegistro'),
+  );
   router.get(
     '/times/desenvolvedor/:desenvolvedor_id',
+    autentica,
+    autoriza('desenvolvedor'),
     invokeTimeController('pegaTodosOstimesDoDesenvolvedor'),
   );
 

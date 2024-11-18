@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const authConfig = require('../config/auth.json');
 
 class autenticacaoService {
   constructor({ usuarioRepository }) {
@@ -21,7 +20,7 @@ class autenticacaoService {
       error.status = 404;
       throw error;
     }
-    const token = jwt.sign({ usuario: usuario }, authConfig.secret, {
+    const token = jwt.sign({ usuario: usuario }, process.env.SECRET, {
       expiresIn: 86400,
     });
     return token;
