@@ -4,7 +4,7 @@ import ModalExcluir from './ModalExcluir';
 import ModalAtualizarSoftware from './ModalAtualizarSoftware';
 import { AuthContext } from '../context/authContext';
 
-const TableDataPedido = ({ pedidos, setPedidos }) => {
+const TableDataPedido = ({ th, pedidos, setPedidos }) => {
   const { user } = useContext(AuthContext);
   const [showExcluir, setShowExcluir] = useState(false);
   const [showAtualizar, setShowAtualizar] = useState(false);
@@ -13,9 +13,9 @@ const TableDataPedido = ({ pedidos, setPedidos }) => {
     <Table striped bordered hover>
       <thead>
         <tr>
-          <th>Título</th>
-          <th>Descrição</th>
-          <th>Ações</th>
+          {th.map((t) => (
+            <th>{t}</th>
+          ))}
         </tr>
       </thead>
       <tbody>
@@ -23,6 +23,7 @@ const TableDataPedido = ({ pedidos, setPedidos }) => {
           <tr key={pedido.id}>
             <td>{pedido.titulo}</td>
             <td>{pedido.descricao}</td>
+            {th.includes('time') && <td>{pedido.nomeTime}</td>}
             <td className="d-flex flex-column flex-md-row  gap-2">
               {user.role === 'cliente' && (
                 <>

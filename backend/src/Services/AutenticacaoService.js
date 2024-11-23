@@ -20,7 +20,15 @@ class autenticacaoService {
       error.status = 404;
       throw error;
     }
-    const token = jwt.sign({ usuario: usuario }, process.env.SECRET, {
+    const usuarioSemSenha = {
+      id: usuario.id,
+      nome: usuario.nome,
+      email: usuario.email,
+      role: usuario.role,
+      createdAt: usuario.createdAt,
+      updatedAt: usuario.updatedAt,
+    };
+    const token = jwt.sign({ usuario: usuarioSemSenha }, process.env.SECRET, {
       expiresIn: 86400,
     });
     return token;

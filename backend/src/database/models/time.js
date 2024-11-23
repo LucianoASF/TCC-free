@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       Time.belongsToMany(models.PedidoSoftware, {
         through: models.TimePedidoSoftware,
         foreignKey: 'time_id',
+        as: 'PedidoSoftware',
       });
     }
   }

@@ -36,11 +36,7 @@ const Times = () => {
         className="d-flex flex-wrap flex-sm-column flex-md-row justify-content-center justify-content-md-start"
       >
         {seusTimes.map((time) => (
-          <CardTimes
-            key={time.id}
-            nome={time.nome}
-            desenvolvedores={time.Usuarios}
-          />
+          <CardTimes key={time.id} time={time} setTimes={setSeusTimes} />
         ))}
       </Container>
     </Container>

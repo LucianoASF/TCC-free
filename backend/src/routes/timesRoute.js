@@ -33,6 +33,16 @@ module.exports = () => {
     autoriza('desenvolvedor'),
     invokeTimeController('pegaTodosOstimesDoDesenvolvedor'),
   );
+  router.get(
+    '/times/:id/pedidos-de-softwares',
+    invokeTimeController('pegaTodosOsPedidosDoTime'),
+  );
+  router.delete(
+    '/times/:id/desenvolvedor/:desenvolvedor_id/membro',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokeTimeController('excluiMembro'),
+  );
 
   return router;
 };

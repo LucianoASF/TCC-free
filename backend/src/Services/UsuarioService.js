@@ -35,6 +35,42 @@ class UsuarioService extends Service {
     const dados = await super.pegaUmRegistroPorId(Number(id));
     return dados;
   }
+  async pegaPedidosAceitosDosTimes(idDesenvolvedor) {
+    const desenvolvedor = await this.pegaUmRegistroPorId(
+      Number(idDesenvolvedor),
+    );
+    const times = await desenvolvedor.getTimes();
+    let pedidos = [];
+    for (const time of times) {
+      const pedidosDoTime = await time.getPedidoSoftware({
+        through: { aceito: true },
+      });
+      pedidosDoTime.forEach((pedido) =>
+        pedidos.push({ ...pedido.toJSON(), nomeTime: time.nome }),
+      );
+    }
+    return pedidos;
+  }
+  async pegaPedidosPendentesDevSolo(id) {
+    const desenvolvedor = await this.pegaUmRegistroPorId(Number(id));
+    return desenvolvedor.getPedidoSoftware({
+      where: { '$UsuarioPedidoSoftware.aceito$': false },
+    });
+  }
+  async pegaPedidosPendentesTimesDoDesenvolvedor(id) {
+    const desenvolvedor = await this.pegaUmRegistroPorId(Number(id));
+    const times = await desenvolvedor.getTimes();
+    let pedidos = [];
+    for (const time of times) {
+      const pedidosDoTime = await time.getPedidoSoftware({
+        through: { aceito: false },
+      });
+      pedidosDoTime.forEach((pedido) =>
+        pedidos.push({ ...pedido.toJSON(), nomeTime: time.nome }),
+      );
+    }
+    return pedidos;
+  }
 }
 
 module.exports = UsuarioService;

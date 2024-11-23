@@ -17,6 +17,18 @@ module.exports = () => {
   // Rotas de usuários
   router.get('/usuarios', invokeUsuarioController('pegaTodos'));
   router.get('/usuarios/:id', invokeUsuarioController('pegaUmPorId'));
+  router.get(
+    '/usuarios/:id/times/pedidos-softwares',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokeUsuarioController('pegaPedidosAceitosDosTimes'),
+  );
+  router.get(
+    '/usuarios/:id/times/pedidos-softwares/pendentes',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokeUsuarioController('pegaPedidosPendentesTimesDoDesenvolvedor'),
+  );
   router.post('/usuarios', invokeUsuarioController('criaRegistro'));
   router.put('/usuarios/:id', invokeUsuarioController('atualizaRegistro'));
   router.delete('/usuarios/:id', invokeUsuarioController('excluiRegistro'));
@@ -59,6 +71,12 @@ module.exports = () => {
     autentica,
     autoriza('desenvolvedor'),
     invokePedidoSoftwareController('pegaTodosOsPedidosDesenvolvedor'),
+  );
+  router.get(
+    `/usuarios/desenvolvedor/:id/pedidos-softwares/candidatados`,
+    autentica,
+    autoriza('desenvolvedor'),
+    invokeUsuarioController('pegaPedidosPendentesDevSolo'),
   );
 
   return router;

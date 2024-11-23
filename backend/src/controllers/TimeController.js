@@ -56,6 +56,31 @@ class TimeController extends Controller {
       return res.status(500).json({ error: error.message });
     }
   }
+  async pegaTodosOsPedidosDoTime(req, res) {
+    try {
+      const registros = await this.entidadeService.pegaTodosOsPedidosDoTime(
+        req.params.id,
+      );
+      return res.status(200).json(registros);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async excluiMembro(req, res) {
+    try {
+      await this.entidadeService.excluiMembro(
+        req.usuario.id,
+        req.params.desenvolvedor_id,
+        req.params.id,
+      );
+      return res.status(204).json({ msg: 'Registro excluido com sucesso' });
+    } catch (error) {
+      if (error.status === 400) {
+        return res.status(400).json({ error: error.message });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = TimeController;
