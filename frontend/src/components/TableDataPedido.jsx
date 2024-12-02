@@ -3,18 +3,20 @@ import { Button, Table } from 'react-bootstrap';
 import ModalExcluir from './ModalExcluir';
 import ModalAtualizarSoftware from './ModalAtualizarSoftware';
 import { AuthContext } from '../context/authContext';
+import ModalCandidatos from './ModalCandidatos';
 
 const TableDataPedido = ({ th, pedidos, setPedidos }) => {
   const { user } = useContext(AuthContext);
   const [showExcluir, setShowExcluir] = useState(false);
   const [showAtualizar, setShowAtualizar] = useState(false);
+  const [showCandidatos, setShowCandidatos] = useState(false);
   const [idPedidoSoftware, setIdPedidoSoftware] = useState(0);
   return (
-    <Table striped bordered hover>
+    <Table bordered hover>
       <thead>
         <tr>
           {th.map((t) => (
-            <th>{t}</th>
+            <th key={t}>{t}</th>
           ))}
         </tr>
       </thead>
@@ -45,6 +47,15 @@ const TableDataPedido = ({ th, pedidos, setPedidos }) => {
                   >
                     Excluir
                   </Button>
+                  <Button
+                    onClick={() => {
+                      setIdPedidoSoftware(pedido.id);
+                      setShowCandidatos(true);
+                    }}
+                    variant="warning"
+                  >
+                    Desenvolvedor(es)
+                  </Button>
                 </>
               )}
             </td>
@@ -63,6 +74,13 @@ const TableDataPedido = ({ th, pedidos, setPedidos }) => {
           setState={setPedidos}
           id={idPedidoSoftware}
         />
+        {user.role === 'cliente' && (
+          <ModalCandidatos
+            show={showCandidatos}
+            setShow={setShowCandidatos}
+            idPedido={idPedidoSoftware}
+          />
+        )}
       </tbody>
     </Table>
   );

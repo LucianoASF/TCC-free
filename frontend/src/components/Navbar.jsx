@@ -11,14 +11,12 @@ const Navbar = ({ role = null }) => {
     navigate('/login');
   };
   return (
-    <NavbarRB bg="primary" data-bs-theme="dark">
+    <NavbarRB expand="md" bg="primary" data-bs-theme="dark">
       <Container>
-        <div className="d-flex justify-content-between">
-          <NavbarRB.Brand href="#home">Free</NavbarRB.Brand>
+        <NavbarRB.Brand href="#home">Free</NavbarRB.Brand>
+        <NavbarRB.Toggle aria-controls="basic-navbar-nav" />
+        <NavbarRB.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/">
-              Home
-            </Nav.Link>
             <Nav.Link as={Link} to="/seus-pedidos-softwares">
               Seus Pedidos de Softwares
             </Nav.Link>
@@ -33,10 +31,10 @@ const Navbar = ({ role = null }) => {
               </>
             )}
           </Nav>
-        </div>
-        <div>
-          <Button onClick={fazerLogout}>Sair</Button>
-        </div>
+          <div>
+            <Button onClick={fazerLogout}>Sair</Button>
+          </div>
+        </NavbarRB.Collapse>
       </Container>
     </NavbarRB>
   );

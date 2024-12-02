@@ -43,7 +43,7 @@ class UsuarioService extends Service {
     let pedidos = [];
     for (const time of times) {
       const pedidosDoTime = await time.getPedidoSoftware({
-        through: { aceito: true },
+        where: { '$TimePedidoSoftware.aceito$': true },
       });
       pedidosDoTime.forEach((pedido) =>
         pedidos.push({ ...pedido.toJSON(), nomeTime: time.nome }),
@@ -63,13 +63,20 @@ class UsuarioService extends Service {
     let pedidos = [];
     for (const time of times) {
       const pedidosDoTime = await time.getPedidoSoftware({
-        through: { aceito: false },
+        where: { '$TimePedidoSoftware.aceito$': false },
       });
       pedidosDoTime.forEach((pedido) =>
         pedidos.push({ ...pedido.toJSON(), nomeTime: time.nome }),
       );
     }
     return pedidos;
+  }
+  async pegatodosOsTimesQueODevEhAdmin(id) {
+    const desenvolvedor = await this.pegaUmRegistroPorId(id);
+    const times = await desenvolvedor.getTimes({
+      where: { '$UsuarioTime.admin$': true },
+    });
+    return times;
   }
 }
 

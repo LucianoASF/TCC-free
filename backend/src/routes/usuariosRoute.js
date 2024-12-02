@@ -78,6 +78,42 @@ module.exports = () => {
     autoriza('desenvolvedor'),
     invokeUsuarioController('pegaPedidosPendentesDevSolo'),
   );
+  router.get(
+    '/usuarios/clientes/pedidos-softwares/:id/candidatos',
+    autentica,
+    autoriza('cliente'),
+    invokePedidoSoftwareController('listaTodosOsDevsETimesCandidatosPorPedido'),
+  );
+  router.post(
+    '/usuarios/desenvolvedor/pedidos-softwares/:pedido_software_id',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokePedidoSoftwareController('candidataSolo'),
+  );
+  router.get(
+    '/usuarios/desenvolvedor/pedidos-softwares/:id/verifica-candidatura',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokePedidoSoftwareController('verificaSeJaSeCandidatouDevSolo'),
+  );
+  router.get(
+    '/usuarios/desenvolvedor/times/admin',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokeUsuarioController('pegatodosOsTimesQueODevEhAdmin'),
+  );
+  router.post(
+    '/usuarios/desenvolvedor/pedidos-softwares/:pedido_software_id/time/:time_id',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokePedidoSoftwareController('candidataTime'),
+  );
+  router.get(
+    '/usuarios/desenvolvedor/pedidos-softwares/:pedido_software_id/time/:time_id/verifica-candidatura',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokePedidoSoftwareController('verificaSeJaSeCandidatouTime'),
+  );
 
   return router;
 };

@@ -13,6 +13,12 @@ module.exports = () => {
 
   // Definindo as rotas para `timeController`
   router.get('/times', invokeTimeController('pegaTodos'));
+  router.get(
+    '/times/disponiveis',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokeTimeController('pegaTodosOsTimesDisponiveis'),
+  );
   router.get('/times/:id', invokeTimeController('pegaUmPorId'));
   router.post(
     '/times',
@@ -43,6 +49,11 @@ module.exports = () => {
     autoriza('desenvolvedor'),
     invokeTimeController('excluiMembro'),
   );
-
+  router.post(
+    '/times/:id/desenvolvedor/adiciona-membro',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokeTimeController('adicionaDevAoTime'),
+  );
   return router;
 };

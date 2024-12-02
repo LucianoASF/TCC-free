@@ -47,6 +47,16 @@ class UsuarioController extends Controller {
       return res.status(500).json({ error: error.message });
     }
   }
+  async pegatodosOsTimesQueODevEhAdmin(req, res) {
+    try {
+      const times = await this.entidadeService.pegatodosOsTimesQueODevEhAdmin(
+        req.usuario.id,
+      );
+      return res.status(200).json(times);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = UsuarioController;

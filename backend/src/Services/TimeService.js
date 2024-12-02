@@ -69,9 +69,37 @@ class TimeService extends Service {
       idDequemVaiSerExcluido,
     );
     const time = await this.pegaUmRegistroPorId(idTime);
-    console.log(time);
 
     await time.removeUsuario(desenvolvedor);
+  }
+  async pegaTodosOsTimesDisponiveis(idDesenvolvedor) {
+    const times = await this.repository.pegaTodosOsTimesAceitandoMembros();
+    const desenvolvedor = await this.usuarioService.pegaUmRegistroPorId(
+      idDesenvolvedor,
+    );
+    const timesDoDev = await desenvolvedor.getTimes();
+    const timesDisponiveis = [];
+    for (const time of times) {
+      const verifica = timesDoDev.filter(
+        (timeDoDev) => timeDoDev.id === time.id,
+      );
+      if (verifica.length === 0) {
+        timesDisponiveis.push(time);
+      }
+    }
+    return timesDisponiveis;
+  }
+  async adicionaDevAoTime(idDesenvolvedor, idTime) {
+    const desenvolvedor = await this.usuarioService.pegaUmRegistroPorId(
+      idDesenvolvedor,
+    );
+    const time = await this.pegaUmRegistroPorId(idTime);
+    if (await time.hasUsuario(desenvolvedor)) {
+      const error = new Error('Você ja faz parte desse time');
+      error.status = 400;
+      throw error;
+    }
+    await time.addUsuario(desenvolvedor, { through: { admin: false } });
   }
 }
 

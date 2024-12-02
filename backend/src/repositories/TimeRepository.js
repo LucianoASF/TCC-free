@@ -27,6 +27,13 @@ class TimeRepository extends Repository {
     }
     return timesComTodosOsDesenvolvedores;
   }
+  async pegaTodosOsTimesAceitandoMembros() {
+    const times = await dataSource.Time.findAll({
+      include: { model: dataSource.Usuario },
+      where: { aceitando_membros: true },
+    });
+    return times;
+  }
 }
 
 module.exports = TimeRepository;

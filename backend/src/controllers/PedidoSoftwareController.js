@@ -119,6 +119,70 @@ class PedidoSoftwareController extends Controller {
       return res.status(500).json({ error: error.message });
     }
   }
+  async listaTodosOsDevsETimesCandidatosPorPedido(req, res) {
+    try {
+      const registros =
+        await this.entidadeService.listaTodosOsDevsETimesCandidatosPorPedido(
+          req.params.id,
+          req.usuario.id,
+        );
+      return res.status(200).json(registros);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async candidataSolo(req, res) {
+    try {
+      await this.entidadeService.candidataSolo(
+        req.usuario.id,
+        req.params.pedido_software_id,
+      );
+      return res.status(204).json();
+    } catch (error) {
+      if (error.status === 404) {
+        return res.status(404).json({ error: error.message });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async verificaSeJaSeCandidatouDevSolo(req, res) {
+    try {
+      const trueOuFalse =
+        await this.entidadeService.verificaSeJaSeCandidatouDevSolo(
+          req.params.id,
+          req.usuario.id,
+        );
+      return res.status(200).json({ verdadeiro: trueOuFalse });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async candidataTime(req, res) {
+    try {
+      await this.entidadeService.candidataTime(
+        req.usuario.id,
+        req.params.pedido_software_id,
+        req.params.time_id,
+      );
+      return res.status(204).json();
+    } catch (error) {
+      if (error.status === 403)
+        return res.status(403).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async verificaSeJaSeCandidatouTime(req, res) {
+    try {
+      const trueOuFalse =
+        await this.entidadeService.verificaSeJaSeCandidatouTime(
+          req.params.pedido_software_id,
+          req.params.time_id,
+        );
+      return res.status(200).json({ verdadeiro: trueOuFalse });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = PedidoSoftwareController;

@@ -1,9 +1,16 @@
 const Service = require('./Service.js');
 
 class PedidosSoftwareService extends Service {
-  constructor({ pedidoSoftwareRepository, usuarioService }) {
+  constructor({
+    pedidoSoftwareRepository,
+    usuarioService,
+    timeService,
+    usuarioTimeService,
+  }) {
     super(pedidoSoftwareRepository);
     this.usuarioService = usuarioService;
+    this.timeService = timeService;
+    this.usuarioTimeService = usuarioTimeService;
   }
   async pegaTodosOsRegistrosPorCliente(clienteId) {
     return this.repository.pegaTodosOsRegistrosPorCliente(Number(clienteId));
@@ -43,7 +50,9 @@ class PedidosSoftwareService extends Service {
     const todosPedidos = await this.pegaTodosOsRegistros();
     let idPedidosSemDev = [];
     for (const pedido of todosPedidos) {
-      const item = await pedido.getCandidatos();
+      const item = await pedido.getCandidatos({
+        where: { '$UsuarioPedidoSoftware.aceito$': true },
+      });
       item.length === 0 && idPedidosSemDev.push(pedido.id);
     }
     let pedidos = [];
@@ -70,6 +79,44 @@ class PedidosSoftwareService extends Service {
       where: { '$UsuarioPedidoSoftware.aceito$': true },
     });
     return pedidos;
+  }
+  async listaTodosOsDevsETimesCandidatosPorPedido(id, idCliente) {
+    const pedido = await this.pegaUmPorIdCliente(id, idCliente);
+    const candidatos = await pedido.getCandidatos();
+    const times = await pedido.getTimes();
+    return [...candidatos, ...times];
+  }
+  async candidataSolo(id, idPedido) {
+    const desenvolvedor = await this.usuarioService.pegaUmRegistroPorId(id);
+    const pedido = await this.pegaUmRegistroPorId(idPedido);
+    await pedido.addCandidatos(desenvolvedor, {
+      through: { aceito: false },
+    });
+  }
+  async verificaSeJaSeCandidatouDevSolo(id, idDesenvolvedor) {
+    const pedido = await this.pegaUmRegistroPorId(id);
+    const verifica = await pedido.hasCandidato(idDesenvolvedor);
+    return verifica;
+  }
+  async candidataTime(idDesenvolvedor, idPedido, idTime) {
+    const ehAdmin = this.usuarioTimeService.verificaSeODevEhAdmin(
+      idDesenvolvedor,
+      idTime,
+    );
+    if (!ehAdmin) {
+      const error = new Error('Você não é admin');
+      error.status = 403;
+      throw error;
+    }
+    const pedido = await this.pegaUmRegistroPorId(idPedido);
+    const time = await this.timeService.pegaUmRegistroPorId(idTime);
+    await pedido.addTimes(time, { through: { aceito: false } });
+  }
+  async verificaSeJaSeCandidatouTime(idPedido, idTime) {
+    const pedido = await this.pegaUmRegistroPorId(idPedido);
+    const time = await this.timeService.pegaUmRegistroPorId(idTime);
+    const verifica = await pedido.hasTime(time);
+    return verifica;
   }
 }
 

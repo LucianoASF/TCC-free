@@ -81,6 +81,29 @@ class TimeController extends Controller {
       return res.status(500).json({ error: error.message });
     }
   }
+  async pegaTodosOsTimesDisponiveis(req, res) {
+    try {
+      const times = await this.entidadeService.pegaTodosOsTimesDisponiveis(
+        req.usuario.id,
+      );
+      return res.status(200).json(times);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async adicionaDevAoTime(req, res) {
+    try {
+      await this.entidadeService.adicionaDevAoTime(
+        req.usuario.id,
+        req.params.id,
+      );
+      res.status(200).json();
+    } catch (error) {
+      if (error.status === 400)
+        return res.status(400).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = TimeController;

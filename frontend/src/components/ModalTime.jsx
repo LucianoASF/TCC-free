@@ -4,7 +4,7 @@ import { Button, Modal } from 'react-bootstrap';
 import { AuthContext } from '../context/authContext';
 import { useContext, useEffect, useState } from 'react';
 
-const ModalTime = ({ show, setShow, time, setTimes }) => {
+const ModalTime = ({ show, setShow, time, setTimes, alterou, setAlterou }) => {
   const { user } = useContext(AuthContext);
   const [ehAdmin, setEhAdmin] = useState(false);
   useEffect(() => {
@@ -20,18 +20,25 @@ const ModalTime = ({ show, setShow, time, setTimes }) => {
       const res = await axios.delete(
         `/times/${usuario.UsuarioTime.time_id}/desenvolvedor/${usuario.id}/membro`,
       );
-      setTimes((prevTimes) =>
-        prevTimes.map((time) =>
-          time.id === usuario.UsuarioTime.time_id
-            ? {
-                ...time,
-                Usuarios: time.Usuarios.filter(
-                  (user) => usuario.id !== user.id,
-                ),
-              }
-            : time,
-        ),
-      );
+      if (user.id !== usuario.id) {
+        setTimes((prevTimes) =>
+          prevTimes.map((time) =>
+            time.id === usuario.UsuarioTime.time_id
+              ? {
+                  ...time,
+                  Usuarios: time.Usuarios.filter(
+                    (user) => usuario.id !== user.id,
+                  ),
+                }
+              : time,
+          ),
+        );
+      } else if (user.id === usuario.id) {
+        setTimes((prevTimes) => prevTimes.filter((pt) => pt.id !== time.id));
+        if (alterou === 0) setAlterou(1);
+        if (alterou === 1) setAlterou(0);
+        handleClose();
+      }
       toast.success('Membro excluído com sucesso');
     } catch (error) {
       toast.error(error.response.data.error);

@@ -1,12 +1,8 @@
 import React from 'react';
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Navigate } from 'react-router-dom';
 
 const Home = () => {
-  return (
-    <Container>
-      <h1 className="text-center">Em breve</h1>
-    </Container>
-  );
+  return <Navigate to="seus-pedidos-softwares" />;
 };
 
 export default Home;

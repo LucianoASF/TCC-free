@@ -17,11 +17,17 @@ const PedidosSoftware = () => {
     <>
       <h1 className="text-center mt-2">Pedidos de Software</h1>
       <Container className="d-flex flex-wrap">
+        {pedidos.length === 0 && (
+          <div className="d-flex justify-content-center w-100">
+            <p className="text-center">Nenhum pedido disponível!</p>
+          </div>
+        )}
         {pedidos.map((pedido) => (
           <CardPedido
             key={pedido.id}
             titulo={pedido.titulo}
             descricao={pedido.descricao}
+            id={pedido.id}
           />
         ))}
       </Container>
