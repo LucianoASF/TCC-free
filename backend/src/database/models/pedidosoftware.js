@@ -30,6 +30,8 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       descricao: DataTypes.TEXT,
+      finalizado_cliente: DataTypes.BOOLEAN,
+      finalizado_desenvolvedor: DataTypes.BOOLEAN,
     },
     {
       sequelize,

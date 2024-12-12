@@ -46,6 +46,8 @@ module.exports = () => {
   );
   router.post(
     '/usuarios/clientes/:cliente_id/pedidos-softwares',
+    autentica,
+    autoriza('cliente'),
     invokePedidoSoftwareController('criaRegistro'),
   );
   router.put(
@@ -79,10 +81,16 @@ module.exports = () => {
     invokeUsuarioController('pegaPedidosPendentesDevSolo'),
   );
   router.get(
-    '/usuarios/clientes/pedidos-softwares/:id/candidatos',
+    '/usuarios/clientes/pedidos-softwares/:id/candidatos/desenvolvedores',
     autentica,
     autoriza('cliente'),
-    invokePedidoSoftwareController('listaTodosOsDevsETimesCandidatosPorPedido'),
+    invokePedidoSoftwareController('listaTodosOsDevsCandidatosPorPedido'),
+  );
+  router.get(
+    '/usuarios/clientes/pedidos-softwares/:id/candidatos/times',
+    autentica,
+    autoriza('cliente'),
+    invokePedidoSoftwareController('listaTodosOsTimesCandidatosPorPedido'),
   );
   router.post(
     '/usuarios/desenvolvedor/pedidos-softwares/:pedido_software_id',
@@ -113,6 +121,40 @@ module.exports = () => {
     autentica,
     autoriza('desenvolvedor'),
     invokePedidoSoftwareController('verificaSeJaSeCandidatouTime'),
+  );
+  router.put(
+    '/usuarios/clientes/pedidos-softwares/:pedido_software_id/time/:time_id/desenvolvedor/:desenvolvedor_id',
+    autentica,
+    autoriza('cliente'),
+    invokePedidoSoftwareController('selecionaCandidato'),
+  );
+  router.put(
+    '/usuarios/desenvolvedor/:desenvolvedor_id/pedidos-softwares/:pedido_software_id/time/:time_id',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokePedidoSoftwareController('finalizaPedidoDevOuTime'),
+  );
+  router.put(
+    '/usuarios/clientes/pedidos-softwares/:pedido_software_id',
+    autentica,
+    autoriza('cliente'),
+    invokePedidoSoftwareController('finalizaPedidoCliente'),
+  );
+  router.get(
+    '/usuarios/clientes/pedidos-softwares/:pedido_software_id',
+    autentica,
+    invokePedidoSoftwareController('verificaSeOClienteJaFinalizou'),
+  );
+  router.get(
+    '/usuarios/desenvolvedor/pedidos-softwares/:pedido_software_id',
+    autentica,
+    invokePedidoSoftwareController('verificaSeODevJaFinalizou'),
+  );
+  router.get(
+    '/usuarios/desenvolvedor/pedidos-softwares/:pedido_software_id/aceito',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokePedidoSoftwareController('pegaTimeAceitoPorPedido'),
   );
 
   return router;

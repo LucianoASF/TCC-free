@@ -26,6 +26,7 @@ function TabsPedidos({
             th={['Título', 'Descrição', 'Ações']}
             pedidos={pedidos}
             setPedidos={setPedidos}
+            timeOuDev="dev"
           />
         )}
       </Tab>
@@ -41,6 +42,7 @@ function TabsPedidos({
             th={['Título', 'Descrição', 'time', 'Ações']}
             pedidos={pedidosTimes}
             setPedidos={setPedidosTimes}
+            timeOuDev="time"
           />
         )}
       </Tab>
@@ -55,7 +57,7 @@ function TabsPedidos({
           <div className="text-center">Não há nenhum Pedido de Software</div>
         ) : (
           <TableDataPedido
-            th={['Título', 'Descrição', 'Ações']}
+            th={['Título', 'Descrição']}
             pedidos={pedidosPendentes}
             setPedidos={setPedidosPendentes}
           />
@@ -72,7 +74,7 @@ function TabsPedidos({
           <div className="text-center">Não há nenhum Pedido de Software</div>
         ) : (
           <TableDataPedido
-            th={['Título', 'Descrição', 'time', 'Ações']}
+            th={['Título', 'Descrição', 'time']}
             pedidos={pedidosPendentesTimes}
             setPedidos={setPedidosPendentesTimes}
           />

@@ -43,6 +43,7 @@ const ModalCandidatar = ({ show, setShow, titulo, id }) => {
     try {
       await axios.post(`/usuarios/desenvolvedor/pedidos-softwares/${id}`);
       toast.success('Candidatura feita com sucesso');
+      setJaSeCandidatou(true);
     } catch (error) {
       toast.error(error.response.data.error);
     }

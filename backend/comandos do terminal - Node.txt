@@ -5,6 +5,9 @@ npx sequelize-cli init
 Criar model:
 npx sequelize-cli model:generate --name Pessoa --attributes nome:string,email:string,cpf:string,ativo:boolean,role:string
 
+criar migração:
+npx sequelize-cli migration:generate --name nome-da-migracao
+
 rodar migração:
 npx sequelize-cli db:migrate
 

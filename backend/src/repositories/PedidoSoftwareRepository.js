@@ -25,6 +25,22 @@ class PedidoSoftwareRepository extends Repository {
       where: { id, cliente_id: clienteId },
     });
   }
+  async finalizaPedidoDevOuTime(pedido) {
+    return dataSource.PedidoSoftware.update(
+      { finalizado_desenvolvedor: pedido.finalizado_desenvolvedor },
+      {
+        where: { id: pedido.id },
+      },
+    );
+  }
+  async finalizaPedidoCliente(pedido) {
+    return dataSource.PedidoSoftware.update(
+      { finalizado_cliente: pedido.finalizado_cliente },
+      {
+        where: { id: pedido.id },
+      },
+    );
+  }
 }
 
 module.exports = PedidoSoftwareRepository;

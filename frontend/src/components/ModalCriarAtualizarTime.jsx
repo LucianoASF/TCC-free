@@ -4,10 +4,14 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../context/authContext';
 
-const ModalCriarTime = ({ show, setShow, times, setTimes }) => {
+const ModalCriarAtualizarTime = ({ show, setShow, time = null, setTimes }) => {
   const { user } = useContext(AuthContext);
-  const [nome, setNome] = useState('');
+  const [nome, setNome] = useState(time?.nome || '');
   const [erroNome, setErroNome] = useState('');
+  const [novosMembros, setNovosMembros] = useState(
+    time?.aceitando_membros !== undefined ? time.aceitando_membros : true,
+  );
+
   const handleClose = () => setShow(false);
 
   const valida = () => {
@@ -21,17 +25,37 @@ const ModalCriarTime = ({ show, setShow, times, setTimes }) => {
   const aoSubmeter = async (e) => {
     e.preventDefault();
     if (!valida()) return;
-    try {
-      const res = await axios.post('/times', { nome });
-      if (res.status === 201) {
-        toast.success('Time criado com sucesso');
-        const res = await axios.get(`/times/desenvolvedor/${user.id}`);
-        setTimes(res.data);
-        handleClose();
-        setNome('');
+    if (!time) {
+      try {
+        const res = await axios.post('/times', {
+          nome,
+          aceitando_membros: novosMembros,
+        });
+        if (res.status === 201) {
+          toast.success('Time criado com sucesso');
+          const res = await axios.get(`/times/desenvolvedor/${user.id}`);
+          setTimes(res.data);
+          handleClose();
+          setNome('');
+        }
+      } catch (error) {
+        toast.error('Ocorreu um erro ao criar o Time');
       }
-    } catch (error) {
-      toast.error('Ocorreu um erro ao criar o Time');
+    } else {
+      try {
+        const res = await axios.put(`/times/${time.id}`, {
+          nome,
+          aceitando_membros: novosMembros,
+        });
+        if (res.status === 200) {
+          setTimes((prevTimes) => prevTimes.filter((pt) => pt.id !== time.id));
+          setTimes((prevtimes) => [...prevtimes, res.data]);
+          toast.success('Time Atualizado com sucesso');
+          handleClose();
+        }
+      } catch (error) {
+        toast.error(error.response.data.error);
+      }
     }
   };
 
@@ -55,9 +79,17 @@ const ModalCriarTime = ({ show, setShow, times, setTimes }) => {
             </Form.Floating>
             {erroNome && <span className="text-danger">{erroNome}</span>}
           </Form.Group>
+          <Form.Check
+            type="checkbox"
+            label="Aceitar novos membros?"
+            checked={novosMembros}
+            onChange={(e) => {
+              setNovosMembros(e.target.checked);
+            }}
+          />
           <Form.Group className="d-flex justify-content-end mt-3">
             <Button type="submit" variant="primary">
-              Criar Time
+              {time ? 'Atualizar Time' : 'Criar Time'}
             </Button>
           </Form.Group>
         </Form>
@@ -71,4 +103,4 @@ const ModalCriarTime = ({ show, setShow, times, setTimes }) => {
   );
 };
 
-export default ModalCriarTime;
+export default ModalCriarAtualizarTime;

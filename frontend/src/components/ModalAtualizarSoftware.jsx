@@ -68,7 +68,7 @@ const ModalAtualizarSoftware = ({
         handleClose();
       }
     } catch (error) {
-      toast.error('Ocorreu um erro ao atualizar o Pedido de Software');
+      toast.error(error.response.data.error);
     }
   };
 

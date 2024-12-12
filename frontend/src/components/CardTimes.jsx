@@ -1,9 +1,10 @@
 import axios from '../axios.config';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button, Card } from 'react-bootstrap';
 import ModalTime from './ModalTime';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../context/authContext';
+import ModalCriarAtualizarTime from './ModalCriarAtualizarTime';
 
 const CardTimes = ({
   time,
@@ -14,7 +15,17 @@ const CardTimes = ({
   setAlterou,
 }) => {
   const [showModal, setShowModal] = useState(false);
+  const [showAtualizar, setShowAtualizar] = useState(false);
   const { user } = useContext(AuthContext);
+  const [ehAdmin, setEhAdmin] = useState(false);
+  useEffect(() => {
+    time.Usuarios.forEach(
+      (usuario) =>
+        usuario.UsuarioTime.admin &&
+        usuario.UsuarioTime.desenvolvedor_id === user.id &&
+        setEhAdmin(true),
+    );
+  }, [user]);
 
   const entraNoTime = async () => {
     try {
@@ -25,14 +36,18 @@ const CardTimes = ({
       const novoTime = {
         ...time,
         Usuarios: [
+          ...time.Usuarios,
           {
             id: user.id,
             nome: user.nome,
-            UsuarioTime: { desenvolvedor_id: user.id, time_id: time.id },
+            UsuarioTime: {
+              desenvolvedor_id: user.id,
+              time_id: time.id,
+              admin: false,
+            },
           },
         ],
       };
-      console.log(novoTime);
 
       setSeusTimes((prevSeustimes) => [...prevSeustimes, novoTime]);
       toast.success('Entrou no time com sucesso');
@@ -54,9 +69,27 @@ const CardTimes = ({
       </Card.Body>
       <Card.Footer>
         {qualTab === 'seus times' && (
-          <Button variant="primary" onClick={() => setShowModal(true)}>
-            Ver time
-          </Button>
+          <div className="d-flex gap-2">
+            <Button variant="primary" onClick={() => setShowModal(true)}>
+              Ver time
+            </Button>
+            {ehAdmin && (
+              <>
+                <Button
+                  variant="warning"
+                  onClick={() => setShowAtualizar(true)}
+                >
+                  Atualizar
+                </Button>
+                <ModalCriarAtualizarTime
+                  show={showAtualizar}
+                  setShow={setShowAtualizar}
+                  setTimes={setSeusTimes}
+                  time={time}
+                />
+              </>
+            )}
+          </div>
         )}
         {qualTab === 'times disponiveis' && (
           <Button variant="primary" onClick={entraNoTime}>

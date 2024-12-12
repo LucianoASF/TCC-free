@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   Time.init(
     {
       nome: DataTypes.STRING(45),
+      aceitando_membros: DataTypes.BOOLEAN,
     },
     {
       sequelize,

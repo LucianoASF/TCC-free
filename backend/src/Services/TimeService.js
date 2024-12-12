@@ -41,6 +41,30 @@ class TimeService extends Service {
     });
     return pedidosTime;
   }
+  async atualizaRegistro(registroAtualizado, idTime, idDesenvolvedor) {
+    const ehAdmin = await this.usuarioTimeService.verificaSeODevEhAdmin(
+      idDesenvolvedor,
+      idTime,
+    );
+    if (!ehAdmin) {
+      const error = new Error('Somente o admin pode atualizar o time');
+      error.status = 403;
+      throw error;
+    }
+    const listaDeRegistrosAtualizados = await this.repository.atualizaRegistro(
+      registroAtualizado,
+      Number(idTime),
+    );
+    if (listaDeRegistrosAtualizados[0] === 0) {
+      const error = new Error('Usuário não encontrado');
+      error.status = 404;
+      throw error;
+    }
+    const dados = await this.repository.pegaUmRegistroPorIdComUsuario(
+      Number(idTime),
+    );
+    return dados;
+  }
   async excluiMembro(idDeQuemQuerExcluir, idDequemVaiSerExcluido, idTime) {
     const ehAdmin = await this.usuarioTimeService.verificaSeODevEhAdmin(
       idDeQuemQuerExcluir,

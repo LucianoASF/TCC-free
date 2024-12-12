@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/authContext';
 import { Button, Container, Tab, Tabs } from 'react-bootstrap';
 import CardTimes from '../components/CardTimes';
-import ModalCriarTime from '../components/ModalCriarTime';
+import ModalCriarAtualizarTime from '../components/ModalCriarAtualizarTime';
 
 const Times = () => {
   const { user } = useContext(AuthContext);
@@ -38,7 +38,7 @@ const Times = () => {
             >
               Criar Time
             </Button>
-            <ModalCriarTime
+            <ModalCriarAtualizarTime
               show={showModalCriarTime}
               setShow={setShowModalCriarTime}
               times={seusTimes}

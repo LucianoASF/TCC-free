@@ -38,6 +38,29 @@ class TimeController extends Controller {
       return res.status(500).json({ error: error.message });
     }
   }
+  async atualizaRegistro(req, res) {
+    try {
+      const registroAtualizado = await this.entidadeService.atualizaRegistro(
+        req.body,
+        req.params.id,
+        req.usuario.id,
+      );
+      return res.status(200).json(registroAtualizado);
+    } catch (error) {
+      if (error.status === 404) {
+        return res.status(404).json({ error: error.message });
+      }
+      if (error.status === 403) {
+        return res.status(403).json({ error: error.message });
+      }
+      if (error.name === 'SequelizeValidationError') {
+        return res.status(422).json({
+          message: error.errors.map((err) => err.message),
+        });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+  }
   async excluiRegistro(req, res) {
     if (req.usuario.id !== Number(req.params.desenvolvedor_id))
       return res.status(403).json({

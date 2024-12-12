@@ -26,7 +26,12 @@ module.exports = () => {
     autoriza('desenvolvedor'),
     invokeTimeController('criaRegistro'),
   );
-  router.put('/times/:id', invokeTimeController('atualizaRegistro'));
+  router.put(
+    '/times/:id',
+    autentica,
+    autoriza('desenvolvedor'),
+    invokeTimeController('atualizaRegistro'),
+  );
   router.delete(
     '/times/:id/desenvolvedor/:desenvolvedor_id',
     autentica,

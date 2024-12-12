@@ -43,7 +43,7 @@ class PedidosSoftwareService extends Service {
       error.status = 404;
       throw error;
     }
-    const dados = await this.pegaUmPorId(Number(id), Number(clienteId));
+    const dados = await this.pegaUmPorIdCliente(Number(id), Number(clienteId));
     return dados;
   }
   async pegaTodosOsRegistrosSemDev() {
@@ -80,11 +80,15 @@ class PedidosSoftwareService extends Service {
     });
     return pedidos;
   }
-  async listaTodosOsDevsETimesCandidatosPorPedido(id, idCliente) {
+  async listaTodosOsDevsCandidatosPorPedido(id, idCliente) {
     const pedido = await this.pegaUmPorIdCliente(id, idCliente);
     const candidatos = await pedido.getCandidatos();
+    return candidatos;
+  }
+  async listaTodosOsTimesCandidatosPorPedido(id, idCliente) {
+    const pedido = await this.pegaUmPorIdCliente(id, idCliente);
     const times = await pedido.getTimes();
-    return [...candidatos, ...times];
+    return times;
   }
   async candidataSolo(id, idPedido) {
     const desenvolvedor = await this.usuarioService.pegaUmRegistroPorId(id);
@@ -99,7 +103,7 @@ class PedidosSoftwareService extends Service {
     return verifica;
   }
   async candidataTime(idDesenvolvedor, idPedido, idTime) {
-    const ehAdmin = this.usuarioTimeService.verificaSeODevEhAdmin(
+    const ehAdmin = await this.usuarioTimeService.verificaSeODevEhAdmin(
       idDesenvolvedor,
       idTime,
     );
@@ -117,6 +121,149 @@ class PedidosSoftwareService extends Service {
     const time = await this.timeService.pegaUmRegistroPorId(idTime);
     const verifica = await pedido.hasTime(time);
     return verifica;
+  }
+  async selecionaCandidato(idPedido, idCliente, idTime = null, idDev = null) {
+    const pedido = await this.pegaUmRegistroPorId(idPedido);
+    const verificaSeUmTimeEstaAceito = await pedido.getTimes({
+      where: { '$TimePedidoSoftware.aceito$': true },
+    });
+    const verificaSeUmDevEstaAceito = await pedido.getCandidatos({
+      where: { '$UsuarioPedidoSoftware.aceito$': true },
+    });
+    if (
+      verificaSeUmDevEstaAceito.length > 0 ||
+      verificaSeUmTimeEstaAceito.length > 0
+    ) {
+      const error = new Error('Esse pedido já tem desenvolvedor(es)');
+      error.status = 400;
+      throw error;
+    }
+
+    if (idCliente !== pedido.cliente_id) {
+      const error = new Error(
+        'Você só pode selecionar o candidato para seus pedidos de software',
+      );
+      error.status = 403;
+      throw error;
+    }
+    if (idTime) {
+      const time = await this.timeService.pegaUmRegistroPorId(idTime);
+      const oTimeSeCandidatou = await pedido.hasTimes(time);
+      if (!oTimeSeCandidatou) {
+        const error = new Error('Esse time não se candidatou!');
+        error.status = 400;
+        throw error;
+      }
+      pedido.setTimes(time.id, {
+        through: { aceito: true },
+      });
+      pedido.setCandidatos([]);
+    }
+    if (idDev) {
+      const dev = await this.usuarioService.pegaUmRegistroPorId(idDev);
+      const oDevSeCandidatou = await pedido.hasCandidatos(dev);
+      if (!oDevSeCandidatou) {
+        const error = new Error('Esse desenvolvedor não se candidatou!');
+        error.status = 400;
+        throw error;
+      }
+      await pedido.setCandidatos(dev.id, {
+        through: { aceito: true },
+      });
+
+      pedido.setTimes([]);
+    }
+  }
+
+  async finalizaPedidoDevOuTime(idPedido, idDev = null, idTime = null) {
+    const pedido = await this.pegaUmRegistroPorId(idPedido);
+    if (idDev && !idTime) {
+      const desenvolvedor = await this.usuarioService.pegaUmRegistroPorId(
+        idDev,
+      );
+      const temOCandidatoEEstaAceito = await pedido.hasCandidatos(
+        desenvolvedor,
+        {
+          where: { '$UsuarioPedidoSoftware.aceito$': true },
+        },
+      );
+
+      if (temOCandidatoEEstaAceito) {
+        pedido.finalizado_desenvolvedor = true;
+
+        await this.repository.finalizaPedidoDevOuTime(pedido);
+        console.log(pedido.finalizado_cliente);
+
+        if (pedido.finalizado_cliente === true) {
+          await this.excluiRegistro(pedido.id);
+        }
+      }
+    } else if (!idDev && idTime) {
+      const ehAdmin = await this.usuarioTimeService.verificaSeODevEhAdmin(
+        idDev,
+        idTime,
+      );
+      if (!ehAdmin) {
+        const error = new Error('Você não é admin');
+        error.status = 403;
+        throw error;
+      }
+      const time = await this.timeService.pegaUmRegistroPorId(idTime);
+      const temOCandidatoEEstaAceito = await pedido.hasTimes(time, {
+        where: { '$TimePedidoSoftware.aceito$': true },
+      });
+      if (temOCandidatoEEstaAceito) {
+        pedido.finalizado_desenvolvedor = true;
+        await this.repository.finalizaPedidoDevOuTime(pedido);
+        console.log(pedido.finalizado_cliente);
+
+        if (pedido.finalizado_cliente === true) {
+          await this.excluiRegistro(pedido.id);
+        }
+      }
+    }
+  }
+  async finalizaPedidoCliente(idPedido, idCliente) {
+    const pedido = await this.pegaUmPorIdCliente(idPedido, idCliente);
+    const temTimeAceito = await pedido.getTimes({
+      where: { '$TimePedidoSoftware.aceito$': true },
+    });
+    const temDevAceito = await pedido.getCandidatos({
+      where: { '$UsuarioPedidoSoftware.aceito$': true },
+    });
+    if (temTimeAceito.length === 0 && temDevAceito.length === 0) {
+      const error = new Error(
+        'Não tem nenhum desenvolvedor ou time aceito no seu pedido de software',
+      );
+      error.status = 400;
+
+      throw error;
+    }
+    pedido.finalizado_cliente = true;
+    await this.repository.finalizaPedidoCliente(pedido);
+    console.log(pedido.finalizado_desenvolvedor);
+    if (pedido.finalizado_desenvolvedor === true) {
+      await this.excluiRegistro(pedido.id);
+    }
+  }
+  async verificaSeODevJaFinalizou(idPedido) {
+    const pedido = await this.pegaUmRegistroPorId(idPedido);
+    if (pedido.finalizado_desenvolvedor) {
+      return { finalizado: true };
+    }
+  }
+  async verificaSeOClienteJaFinalizou(idPedido) {
+    const pedido = await this.pegaUmRegistroPorId(idPedido);
+    if (pedido.finalizado_cliente) {
+      return { finalizado: true };
+    }
+  }
+  async pegaTimeAceitoPorPedido(id) {
+    const pedido = await this.pegaUmRegistroPorId(id);
+    const time = await pedido.getTimes({
+      where: { '$TimePedidoSoftware.aceito$': true },
+    });
+    return time[0];
   }
 }
 

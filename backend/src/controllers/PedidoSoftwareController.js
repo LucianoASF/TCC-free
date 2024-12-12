@@ -35,6 +35,9 @@ class PedidoSoftwareController extends Controller {
     }
   }
   async criaRegistro(req, res) {
+    if (Number(req.params.cliente_id) !== req.usuario.id) {
+      return res.status(403).json({ error: 'Não autorizado' });
+    }
     try {
       const novoRegistro = await this.entidadeService.criaRegistro(
         req.body,
@@ -119,10 +122,22 @@ class PedidoSoftwareController extends Controller {
       return res.status(500).json({ error: error.message });
     }
   }
-  async listaTodosOsDevsETimesCandidatosPorPedido(req, res) {
+  async listaTodosOsDevsCandidatosPorPedido(req, res) {
     try {
       const registros =
-        await this.entidadeService.listaTodosOsDevsETimesCandidatosPorPedido(
+        await this.entidadeService.listaTodosOsDevsCandidatosPorPedido(
+          req.params.id,
+          req.usuario.id,
+        );
+      return res.status(200).json(registros);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async listaTodosOsTimesCandidatosPorPedido(req, res) {
+    try {
+      const registros =
+        await this.entidadeService.listaTodosOsTimesCandidatosPorPedido(
           req.params.id,
           req.usuario.id,
         );
@@ -180,6 +195,151 @@ class PedidoSoftwareController extends Controller {
         );
       return res.status(200).json({ verdadeiro: trueOuFalse });
     } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async selecionaCandidato(req, res) {
+    try {
+      if (
+        (Number(req.params.time_id) === 0 &&
+          Number(req.params.desenvolvedor_id) === 0) ||
+        (Number(req.params.time_id) !== 0 &&
+          Number(req.params.desenvolvedor_id) !== 0)
+      ) {
+        const error = new Error('Bad request');
+        error.status = 400;
+        throw error;
+      } else if (Number(req.params.time_id) === 0) {
+        await this.entidadeService.selecionaCandidato(
+          req.params.pedido_software_id,
+          req.usuario.id,
+          null,
+          req.params.desenvolvedor_id,
+        );
+        return res.status(204).json();
+      } else if (Number(req.params.desenvolvedor_id) === 0) {
+        await this.entidadeService.selecionaCandidato(
+          req.params.pedido_software_id,
+          req.usuario.id,
+          req.params.time_id,
+        );
+        return res.status(204).json();
+      } else {
+        const error = new Error('Bad request');
+        error.status = 400;
+        throw error;
+      }
+    } catch (error) {
+      if (error.status === 403)
+        return res.status(403).json({ error: error.message });
+      if (error.status === 400)
+        return res.status(400).json({ error: error.message });
+      if (error.status === 404) {
+        return res.status(404).json({ error: error.message });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async finalizaPedidoDevOuTime(req, res) {
+    if (
+      Number(req.params.desenvolvedor_id) !== req.usuario.id &&
+      Number(req.params.desenvolvedor_id) !== 0
+    ) {
+      return res.status(403).json({
+        error: 'Não autorizado',
+      });
+    }
+    try {
+      if (
+        (Number(req.params.time_id) === 0 &&
+          Number(req.params.desenvolvedor_id) === 0) ||
+        (Number(req.params.time_id) !== 0 &&
+          Number(req.params.desenvolvedor_id) !== 0)
+      ) {
+        const error = new Error('Bad request');
+        error.status = 400;
+        throw error;
+      } else if (Number(req.params.time_id) === 0) {
+        await this.entidadeService.finalizaPedidoDevOuTime(
+          req.params.pedido_software_id,
+          req.params.desenvolvedor_id,
+        );
+        return res.status(204).json();
+      } else if (Number(req.params.desenvolvedor_id) === 0) {
+        await this.entidadeService.finalizaPedidoDevOuTime(
+          req.params.pedido_software_id,
+          null,
+          req.params.time_id,
+        );
+        return res.status(204).json();
+      } else {
+        const error = new Error('Bad request');
+        error.status = 400;
+        throw error;
+      }
+    } catch (error) {
+      if (error.status === 404) {
+        return res.status(404).json({ error: error.message });
+      } else if (error.status === 400) {
+        return res.status(400).json({ error: error.message });
+      } else if (error.status === 403) {
+        return res.status(403).json({ error: error.message });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async finalizaPedidoCliente(req, res) {
+    try {
+      await this.entidadeService.finalizaPedidoCliente(
+        req.params.pedido_software_id,
+        req.usuario.id,
+      );
+      return res.status(204).json();
+    } catch (error) {
+      if (error.status === 400) {
+        return res.status(400).json({ error: error.message });
+      } else if (error.status === 404) {
+        return res.status(404).json({ error: error.message });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async verificaSeODevJaFinalizou(req, res) {
+    try {
+      const resposta = await this.entidadeService.verificaSeODevJaFinalizou(
+        req.params.pedido_software_id,
+      );
+      return res.status(200).json(resposta);
+    } catch (error) {
+      if (error.status === 404) {
+        return res.status(404).json({ error: error.message });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async verificaSeOClienteJaFinalizou(req, res) {
+    try {
+      const resposta = await this.entidadeService.verificaSeOClienteJaFinalizou(
+        req.params.pedido_software_id,
+      );
+      return res.status(200).json(resposta);
+    } catch (error) {
+      if (error.status === 404) {
+        return res.status(404).json({ error: error.message });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+  }
+  async pegaTimeAceitoPorPedido(req, res) {
+    try {
+      const registro = await this.entidadeService.pegaTimeAceitoPorPedido(
+        req.params.pedido_software_id,
+      );
+      return res.status(200).json(registro);
+    } catch (error) {
+      if (error.status === 404) {
+        return res.status(404).json({ error: error.message });
+      }
       return res.status(500).json({ error: error.message });
     }
   }

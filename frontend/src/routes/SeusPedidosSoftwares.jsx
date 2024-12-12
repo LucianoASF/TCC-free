@@ -1,7 +1,7 @@
 import axios from '../axios.config';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/authContext';
-import { Button, Col, Container, Row, Table } from 'react-bootstrap';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import ModalCriarSoftware from '../components/ModalCriarSoftware';
 import TableDataPedido from '../components/TableDataPedido';
 import TabsPedidos from '../components/TabsPedidos';
